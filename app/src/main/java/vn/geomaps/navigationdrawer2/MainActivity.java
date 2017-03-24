@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity
         //mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        if(navigation.getMenu().getItem(0).isChecked()){
+            changeFragment(0);
+        }
     }
 
     @Override
@@ -134,11 +138,13 @@ public class MainActivity extends AppCompatActivity
 
     private void changeFragment(int position){
         Fragment fragment = null;
+
         if(position == 0){
             fragment = new MapFragment();
         }else if(position == 1){
             fragment = new NewsFragment();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.content,fragment).commit();
+
     }
 }
