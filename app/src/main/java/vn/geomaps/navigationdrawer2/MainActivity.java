@@ -18,6 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.MapFragment;
+import com.google.maps.android.clustering.ClusterManager;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -135,19 +141,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void changeFragment(int position){
-        Fragment fragment = null;
-
         if(position == 0){
-            if(mapGoogleFragment == null){
-                fragment = new MapFragment();
-                mapGoogleFragment = fragment;
-            }else{
-                fragment = mapGoogleFragment;
-            }
 
+            fragment = new vn.geomaps.navigationdrawer2.MapFragment();
         }else if(position == 1){
             fragment = new NewsFragment();
         }
+        getSupportFragmentManager().beginTransaction().addToBackStack(null);
         getSupportFragmentManager().beginTransaction().replace(R.id.content,fragment).commit();
 
     }

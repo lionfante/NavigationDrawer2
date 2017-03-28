@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import org.json.JSONArray;
 
@@ -39,6 +40,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static View view;
     MapView mapView;
     GoogleMap map;
+    private ClusterManager<Marker> mClusterManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,6 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         String url = "https://geomaps.vn/GeoMaps/GetAllMarkers";
         String dataJSON = "";
         List<Marker> listMarker = null;
+        String line = "";
         String fileCache = getActivity().getCacheDir().getPath() + "/geomapsMarkersCache.txt";
 
         //check file cache
@@ -88,10 +91,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         File checkFileCache = new File(fileCache);
         StoreCache storeCache = new StoreCache(fileCache);
         if(checkFileCache.exists()){
-            String s = storeCache.readFileCache();
+            line = storeCache.readFileCache();
             ReadBoreholes readBoreholes = new ReadBoreholes();
             try {
-                listMarker = readBoreholes.readBoreholeArray(s);
+                listMarker = readBoreholes.readBoreholeArray(line);
                 Log.d("LoadCache","Load vô đây");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -109,6 +112,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         }
         map = googleMap;
+
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(),R.raw.style_map));
         UiSettings mapUiSettings = map.getUiSettings();
         mapUiSettings.setZoomControlsEnabled(true);
@@ -117,9 +121,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         // For showing a move to my location button
         //map.setMyLocationEnabled(true);
-        Marker marker;
+        /*Marker marker;
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.point_icon24x30);
-        for(int i=0;i<100;i++){
+        for(int i=0;i<listMarker.size();i++){
             marker = listMarker.get(i);
             MarkerOptions options = new MarkerOptions();
             options.position(new LatLng(marker.getLatitude(),marker.getLongtitude()));
@@ -127,8 +131,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             options.snippet(String.valueOf(marker.getLatitude()) + "," +String.valueOf(marker.getLongtitude()));
             options.icon(icon);
             map.addMarker(options);
-        }
-
+        }*/
+        setUpClusterer(listMarker);
 
     }
 
@@ -156,4 +160,54 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapView.onLowMemory();
     }
 
+    private void setUpClusterer(List<Marker> markers) {
+        // Position the map.
+        //getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<Marker>(getActivity(), getMap());
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        getMap().setOnCameraIdleListener(mClusterManager);
+        getMap().setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems(markers);
+    }
+
+    private void addItems(List<Marker> markers) {
+
+        // Set some lat/lng coordinates to start with.
+        /*double lat = 51.5145160;
+        double lng = -0.1270060;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            Marker offsetItem = new Marker(lat, lng);
+            mClusterManager.addItem(offsetItem);
+        }*/
+        for(int i = 0;i<markers.size();i++){
+
+            //Marker offsetItem = new Marker(lat, lng);
+            Marker offsetItem = new Marker(markers.get(i).getType(),
+                                            markers.get(i).getId(),
+                                            markers.get(i).getName(),
+                                            markers.get(i).getLatitude(),
+                                            markers.get(i).getLongtitude());
+
+            mClusterManager.addItem(offsetItem);
+        }
+    }
+
+    private void setMap(GoogleMap map){
+        this.map = map;
+    }
+    private GoogleMap getMap(){
+        return this.map;
+    }
 }

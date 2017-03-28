@@ -70,14 +70,15 @@ public class StoreCache extends File {
         String data= "";
         File fileCache = new File(pathname);
         FileReader fileReader = null;
+        BufferedReader buffer = null;
         StringBuilder stringBuilder = new StringBuilder();
         try {
             fileReader = new FileReader(fileCache);
-            BufferedReader buffer = new BufferedReader(fileReader);
+            buffer = new BufferedReader(fileReader);
             while((data = buffer.readLine()) != null){
                 stringBuilder.append(data);
             }
-
+            buffer.close();
             fileReader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

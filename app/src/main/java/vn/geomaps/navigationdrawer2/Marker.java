@@ -1,5 +1,8 @@
 package vn.geomaps.navigationdrawer2;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.io.File;
 import java.io.Serializable;
 
@@ -7,12 +10,17 @@ import java.io.Serializable;
  * Created by lionf_000 on 27-Mar-17.
  */
 
-public class Marker implements Serializable {
+public class Marker implements Serializable, ClusterItem {
     private String type;
     private int id;
     private String name;
     private double latitude;
     private double longtitude;
+    private LatLng mPosition;
+
+    public Marker(double lat, double lng) {
+        mPosition = new LatLng(lat, lng);
+    }
 
     public Marker(String type,int id,String name,double latitude,double longtitude){
         this.type = type;
@@ -20,6 +28,7 @@ public class Marker implements Serializable {
         this.name = name;
         this.latitude = latitude;
         this.longtitude = longtitude;
+        this.mPosition = new LatLng(latitude,longtitude);
     }
 
 
@@ -65,4 +74,18 @@ public class Marker implements Serializable {
     }
 
 
+    @Override
+    public LatLng getPosition() {
+        return mPosition;
+    }
+
+    @Override
+    public String getTitle() {
+        return name;
+    }
+
+    @Override
+    public String getSnippet() {
+        return null;
+    }
 }
