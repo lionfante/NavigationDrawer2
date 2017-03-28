@@ -89,18 +89,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         StoreCache storeCache = new StoreCache(fileCache);
         if(checkFileCache.exists()){
             String s = storeCache.readFileCache();
-            Log.d("SSS",s);
-        }
-
-
-        DownloadBoreholes downloadBoreholes = new DownloadBoreholes();
-        downloadBoreholes.execute(url);
-        try {
-            listMarker = downloadBoreholes.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            ReadBoreholes readBoreholes = new ReadBoreholes();
+            try {
+                listMarker = readBoreholes.readBoreholeArray(s);
+                Log.d("LoadCache","Load vô đây");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            DownloadBoreholes downloadBoreholes = new DownloadBoreholes();
+            downloadBoreholes.execute(url, fileCache);
+            try {
+                listMarker = downloadBoreholes.get();
+                Log.d("LoadNew","Load new từ URL");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
         map = googleMap;
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(),R.raw.style_map));
@@ -113,7 +119,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         //map.setMyLocationEnabled(true);
         Marker marker;
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.point_icon24x30);
-        for(int i=0;i<2;i++){
+        for(int i=0;i<100;i++){
             marker = listMarker.get(i);
             MarkerOptions options = new MarkerOptions();
             options.position(new LatLng(marker.getLatitude(),marker.getLongtitude()));

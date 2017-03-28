@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ReadBoreholes{
     String data = "";
-    public List<Marker> readJsonStreamMarkers(InputStream inputStream) throws IOException {
+    public List<Marker> readJsonStreamMarkers(InputStream inputStream, String fileCache) throws IOException {
 
         JsonReader reader = new JsonReader(new InputStreamReader(inputStream,"UTF-8"));
         reader.beginObject();
@@ -26,6 +26,8 @@ public class ReadBoreholes{
             String field = reader.nextName();
             if(field.equals("data")){
                 data = reader.nextString();
+                StoreCache storeCache = new StoreCache(fileCache);
+                storeCache.createFileCache(data);
             }
         }
         try{

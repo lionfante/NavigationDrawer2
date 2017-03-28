@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity
 
     //TextView mTextMessage;
     Fragment fragment;
+    Fragment mapGoogleFragment = null;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -137,7 +138,13 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
 
         if(position == 0){
-            fragment = new MapFragment();
+            if(mapGoogleFragment == null){
+                fragment = new MapFragment();
+                mapGoogleFragment = fragment;
+            }else{
+                fragment = mapGoogleFragment;
+            }
+
         }else if(position == 1){
             fragment = new NewsFragment();
         }

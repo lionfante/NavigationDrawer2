@@ -30,6 +30,8 @@ public class StoreCache extends File {
 
     public void createFileCache(String data){
         File fileCache =  new File(pathname);
+        //Log.d("pathname",pathname);
+        //og.d("data",data);
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter;
         try {
@@ -51,7 +53,6 @@ public class StoreCache extends File {
             while((line=bufferedReader.readLine())!=null){
                 dataJSON.append(line);
             }
-            Log.d("dataJSON",dataJSON.toString());
         File fileCache =  new File(pathname);
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter;
@@ -74,7 +75,7 @@ public class StoreCache extends File {
             fileReader = new FileReader(fileCache);
             BufferedReader buffer = new BufferedReader(fileReader);
             while((data = buffer.readLine()) != null){
-                stringBuilder.append(data + "/n");
+                stringBuilder.append(data);
             }
 
             fileReader.close();

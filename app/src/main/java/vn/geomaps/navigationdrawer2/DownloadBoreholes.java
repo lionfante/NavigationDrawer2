@@ -37,7 +37,7 @@ public class DownloadBoreholes extends AsyncTask<String,Void,List<Marker>> {
             httpURLConnection.connect();
             inputStream = httpURLConnection.getInputStream();
             ReadBoreholes readBoreholes = new ReadBoreholes();
-            listMarker = readBoreholes.readJsonStreamMarkers(inputStream);
+            listMarker = readBoreholes.readJsonStreamMarkers(inputStream, params[1]);
             httpURLConnection.disconnect();
         } catch (MalformedURLException e) {
             e.printStackTrace();
