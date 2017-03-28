@@ -26,7 +26,6 @@ public class ReadBoreholes{
             String field = reader.nextName();
             if(field.equals("data")){
                 data = reader.nextString();
-                Log.d("AAA",data);
             }
         }
         try{
@@ -61,9 +60,9 @@ public class ReadBoreholes{
                 id = reader.nextInt();
             }else if(field.equals("nm")){
                 name = reader.nextString();
-            }else if(field.equals("latitude")){
+            }else if(field.equals("la")){
                 latitude = reader.nextDouble();
-            }else if(field.equals("longtitude")){
+            }else if(field.equals("lo")){
                 longtitude = reader.nextDouble();
             }else{
                 reader.skipValue();

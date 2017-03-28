@@ -1,10 +1,13 @@
 package vn.geomaps.navigationdrawer2;
 
+import java.io.File;
+import java.io.Serializable;
+
 /**
  * Created by lionf_000 on 27-Mar-17.
  */
 
-public class Marker {
+public class Marker implements Serializable {
     private String type;
     private int id;
     private String name;
@@ -18,6 +21,8 @@ public class Marker {
         this.latitude = latitude;
         this.longtitude = longtitude;
     }
+
+
 
     public String getType() {
         return type;

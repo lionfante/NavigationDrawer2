@@ -3,6 +3,7 @@ package vn.geomaps.navigationdrawer2;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.JsonToken;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -14,11 +15,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -72,6 +81,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         String url = "https://geomaps.vn/GeoMaps/GetAllMarkers";
         String dataJSON = "";
         List<Marker> listMarker = null;
+        String fileCache = getActivity().getCacheDir().getPath() + "/geomapsMarkersCache.txt";
+
+        //check file cache
+        //...
+        File checkFileCache = new File(fileCache);
+        StoreCache storeCache = new StoreCache(fileCache);
+        if(checkFileCache.exists()){
+            String s = storeCache.readFileCache();
+            Log.d("SSS",s);
+        }
+
 
         DownloadBoreholes downloadBoreholes = new DownloadBoreholes();
         downloadBoreholes.execute(url);
@@ -82,24 +102,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Log.d("CountMarker", String.valueOf(listMarker.size()));
-        for(int i = 0; i<5;i++){
-                Log.d("Thongtinborehole: ",listMarker.get(i).getName());
-
-        }
-
-
         map = googleMap;
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(),R.raw.style_map));
+        UiSettings mapUiSettings = map.getUiSettings();
+        mapUiSettings.setZoomControlsEnabled(true);
+        LatLng defaultLocation = new LatLng(10.7855247,106.7081242);
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(defaultLocation).zoom(16).build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         // For showing a move to my location button
         //map.setMyLocationEnabled(true);
-
-        // For dropping a marker at a point on the Map
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
-
-        // For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        Marker marker;
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.point_icon24x30);
+        for(int i=0;i<2;i++){
+            marker = listMarker.get(i);
+            MarkerOptions options = new MarkerOptions();
+            options.position(new LatLng(marker.getLatitude(),marker.getLongtitude()));
+            options.title(marker.getName());
+            options.snippet(String.valueOf(marker.getLatitude()) + "," +String.valueOf(marker.getLongtitude()));
+            options.icon(icon);
+            map.addMarker(options);
+        }
 
 
     }
